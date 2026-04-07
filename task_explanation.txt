@@ -1,0 +1,190 @@
+================================================================================
+         RESTAURANT CHAIN ANALYSIS — TASK EXPLANATION & METHODOLOGY
+================================================================================
+
+PROJECT TITLE:   Restaurant Chain Identification, Rating & Popularity Analysis
+DATASET:         Global Restaurant Dataset (9,551 records, 21 features)
+DELIVERABLE:     Exploratory data analysis with visualizations & summary report
+
+--------------------------------------------------------------------------------
+SECTION 1 — TASK DESCRIPTION
+--------------------------------------------------------------------------------
+
+The objective of this project is divided into two core analytical tasks:
+
+  TASK A — Chain Identification
+  ─────────────────────────────
+  Determine whether restaurant chains are present in the dataset. A restaurant
+  chain is defined as any brand or business name that appears across two or more
+  distinct outlet records — i.e., restaurants with identical names operating at
+  multiple locations.
+
+  TASK B — Rating & Popularity Analysis
+  ──────────────────────────────────────
+  Once chains are identified, analyze and compare them across multiple business-
+  relevant dimensions: aggregate rating, customer votes (as a proxy for
+  popularity), geographic spread (cities and countries covered), and price
+  positioning. Benchmark chain performance against standalone restaurants.
+
+--------------------------------------------------------------------------------
+SECTION 2 — DATASET DESCRIPTION
+--------------------------------------------------------------------------------
+
+The dataset contains records of restaurants from multiple countries, with each
+row representing a single restaurant outlet. Key fields include:
+
+  - Restaurant ID        : Unique identifier per outlet
+  - Restaurant Name      : Brand or establishment name
+  - Country Code         : Numeric country identifier
+  - City                 : Operating city
+  - Cuisines             : Type(s) of food served
+  - Aggregate Rating     : Score on a 0.0–4.9 scale
+  - Rating Text          : Categorical label (Excellent, Very Good, Good,
+                           Average, Poor, Not Rated)
+  - Votes                : Number of customer ratings/reviews received
+  - Average Cost for two : Estimated cost for a two-person dining experience
+  - Price Range          : Ordinal price band (1 = lowest, 4 = highest)
+  - Has Table Booking    : Whether advance table booking is available
+  - Has Online Delivery  : Whether online delivery is offered
+
+--------------------------------------------------------------------------------
+SECTION 3 — METHODOLOGY
+--------------------------------------------------------------------------------
+
+STEP 1: Data Loading & Quality Assessment
+─────────────────────────────────────────
+The dataset was loaded using the pandas library. An initial quality check was
+performed to assess:
+  - Shape and dimensionality
+  - Presence and count of null/missing values
+  - Data types and ranges for each column
+  - Distribution of the target variables (rating, votes)
+
+STEP 2: Chain Identification
+─────────────────────────────
+Each restaurant name was tallied across the dataset using value_counts(). Any
+name appearing in two or more records was classified as a chain. The dataset was
+then split into two subsets:
+  - Chain outlets    : Records belonging to a multi-location brand
+  - Standalone restaurants : Unique brands with only one record
+
+STEP 3: Chain Aggregation
+──────────────────────────
+For each identified chain, the following metrics were computed by grouping on
+restaurant name:
+  - Total outlet count (how many records/locations exist)
+  - Mean aggregate rating across all outlets
+  - Total and average votes
+  - Number of distinct cities and countries covered
+  - Average cost for two
+
+This produced a comprehensive chain-level summary table (chain_summary.csv).
+
+STEP 4: Comparative Rating Analysis
+─────────────────────────────────────
+Ratings for chain outlets and standalone restaurants were compared using:
+  - Histograms with density curves overlaid
+  - Box plots showing median, IQR, and outlier spread
+  - Descriptive statistics (mean, median, standard deviation)
+
+Ratings of 0.0 were excluded from statistical comparisons as they represent
+establishments with no ratings recorded ("Not Rated" category).
+
+STEP 5: Popularity Analysis (Votes)
+─────────────────────────────────────
+Customer votes were used as a proxy for popularity and engagement. Two views
+were taken:
+  - Total votes per chain (raw reach)
+  - Average votes per outlet (engagement normalized by scale)
+
+This distinction reveals whether a chain's popularity is driven by scale or
+by the strength of individual locations.
+
+STEP 6: Geographic Analysis
+─────────────────────────────
+The number of distinct cities each chain operates in was extracted to understand
+geographic penetration. This was compared against total outlet count to
+distinguish between dense city-cluster strategies and wider geographic spread.
+
+STEP 7: Rating Category Breakdown
+───────────────────────────────────
+For the top 10 chains by outlet count, the proportion of outlets falling into
+each rating category (Excellent, Very Good, Good, Average, Poor, Not Rated) was
+computed and visualized as a stacked percentage bar chart. This reveals the
+quality consistency profile of each chain.
+
+STEP 8: Multi-Metric Heatmap
+──────────────────────────────
+To enable holistic comparison across all key metrics simultaneously, a normalized
+heatmap was produced for the top 15 chains. Each metric was min-max normalized
+to a 0–1 scale, with the actual value annotated within each cell. This provides
+an at-a-glance competitive landscape view.
+
+--------------------------------------------------------------------------------
+SECTION 4 — KEY FINDINGS
+--------------------------------------------------------------------------------
+
+  1. Chain Presence
+     734 distinct restaurant chains were identified in the dataset, accounting
+     for 2,839 outlet records — approximately 29.7% of the full dataset. The
+     remaining 6,712 records represent standalone, independent restaurants.
+
+  2. Scale of Operations
+     The largest chain holds 83 outlet records, followed by chains with 79 and
+     63 locations respectively. A long-tail distribution is observed — the
+     majority of chains operate with fewer than 10 outlets.
+
+  3. Rating Comparison
+     Standalone restaurants carry a marginally higher mean aggregate rating
+     (3.49) compared to chain restaurants (3.34). This suggests that chains,
+     while benefiting from brand recognition and scale, may face quality
+     consistency challenges across locations.
+
+  4. Highest-Rated Chains
+     Among chains with at least 5 outlets, the top performers achieve average
+     ratings of 4.34 to 4.58, placing them firmly in the "Excellent" category.
+     This demonstrates that scale and quality are not mutually exclusive.
+
+  5. Votes vs Rating Divergence
+     Chains with the highest total votes do not consistently rank highest in
+     ratings. The most-voted chains attract large customer engagement, but
+     quality perception as reflected in ratings can differ. This highlights
+     two separate competitive axes: brand reach and service quality.
+
+  6. Rating Category Distribution
+     Across the top 10 chains, the dominant rating category at the outlet level
+     is "Average", with a smaller proportion of outlets achieving "Excellent"
+     or "Very Good" ratings. This points to a systemic challenge in maintaining
+     premium quality standards at scale.
+
+  7. Geographic Penetration
+     Leading chains operate across multiple cities, with some covering 10 or
+     more distinct cities within the dataset. However, high outlet counts do
+     not always correspond to wide city coverage — some chains are heavily
+     concentrated within a small number of cities.
+
+--------------------------------------------------------------------------------
+SECTION 5 — OUTPUTS PRODUCED
+--------------------------------------------------------------------------------
+
+  chain_summary.csv                   → Aggregated metrics for all 734 chains
+  fig1_top15_chains_by_outlets.png    → Bar chart: outlet count ranking
+  fig2_rating_chains_vs_standalone.png→ Histogram + boxplot: rating comparison
+  fig3_chain_popularity_bubble.png    → Bubble chart: outlets × rating × votes
+  fig4_rating_category_breakdown.png  → Stacked bar: rating tiers per chain
+  fig5_geographic_spread.png          → Cities vs outlet count comparison
+  fig6_votes_analysis.png             → Total & per-outlet votes ranking
+  fig7_performance_heatmap.png        → Normalized multi-metric heatmap
+
+--------------------------------------------------------------------------------
+SECTION 6 — TOOLS & LIBRARIES USED
+--------------------------------------------------------------------------------
+
+  Language  : Python 3
+  Libraries : pandas, numpy, matplotlib, seaborn
+  Notebook  : Jupyter Notebook (.ipynb)
+  Output    : PNG visualizations (150 DPI), CSV summary
+
+================================================================================
+                             END OF TASK EXPLANATION
+================================================================================
